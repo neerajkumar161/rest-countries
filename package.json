@@ -1,0 +1,19 @@
+{
+  "name": "rest-countries",
+  "version": "1.0.0",
+  "description": "Backend API service to fetch countries information using https://restcountries.com",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node --watch dist/index.js",
+    "compile": "tsc -w"
+  },
+  "keywords": [],
+  "author": "neerajkumar161",
+  "license": "ISC",
+  "engines": {
+    "node": "18.16.1",
+    "pnpm": "8.7.5",
+    "typescript":  "5.2.2"
+  }
+}
