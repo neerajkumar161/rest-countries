@@ -5,8 +5,7 @@ export interface IUserController {
   signinUser: Handler
 }
 
-
 export interface IUser {
- username: string
- password: string 
+  username: string
+  password: string
 }
