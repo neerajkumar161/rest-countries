@@ -4,4 +4,8 @@ import { userRouter } from './app/user/route.js'
 
 export const indexRouter = Router()
 
-indexRouter.use('/user', userRouter).use('/countries', countryRouter)
+indexRouter
+  /* User onboarding routes */
+  .use('/user', userRouter)
+  /* Countries routes to fetch all details */
+  .use('/countries', countryRouter)

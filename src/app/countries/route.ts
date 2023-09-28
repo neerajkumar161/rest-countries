@@ -6,4 +6,8 @@ export const countryRouter = Router()
 
 const { getCountries, getCountryByName } = new CountryController()
 
-countryRouter.use(checkAuth).get('/', getCountries).get('/:country', getCountryByName)
+countryRouter
+  /* checkAuth will apply to all routes below it */
+  .use(checkAuth)
+  .get('/', getCountries)
+  .get('/:country', getCountryByName)

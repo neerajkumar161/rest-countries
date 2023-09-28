@@ -1,7 +1,7 @@
 import jwt, { Secret } from 'jsonwebtoken'
 import { BadRequestException } from './errors/bad-request.js'
 
-const JWT_SECRET_KEY = process.env.DB_DIR as Secret
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY as Secret
 
 type TJWTPayload = { username: string }
 

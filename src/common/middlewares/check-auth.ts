@@ -8,6 +8,10 @@ import { NotAuthorizedException } from '../errors/not-authorized.js'
 const DB_DIR = process.env.DB_DIR
 const USER_DB_PATH = `${DB_DIR}/users.json`
 
+/**
+ * Middleware to authorize the next middleware, it check whether the auth token is passed on headers or not
+ */
+
 export const checkAuth: Handler = async (req, res, next) => {
   try {
     const token = req.headers.authorization

@@ -40,7 +40,6 @@ export class UserController implements IUserController {
   }
 
   signupUser: Handler = async (req, res, next) => {
-    // Signup user
     try {
       const { username, password } = req.body
 
