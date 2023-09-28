@@ -1,5 +1,6 @@
 import { Handler } from 'express'
 import { AuthToken } from '../../common/auth-token.js'
+import { BadRequestException } from '../../common/errors/bad-request.js'
 import { sendResponse } from '../../common/response-json.js'
 import { readFileFromDB, writeFileToDB } from '../../utils/file-system.js'
 import { Password } from '../../utils/password.js'
@@ -11,22 +12,23 @@ const USER_DB_PATH = `${DB_DIR}/users.json`
 export class UserController implements IUserController {
   signinUser: Handler = async (req, res, next) => {
     try {
+
       const { username, password } = req.body
       const fileContent = await readFileFromDB(USER_DB_PATH)
       if (!fileContent) {
         // In case when no file and user created!
-        return sendResponse(res, 400, 'No user exists!')
+        throw new BadRequestException('No users exists!')
       }
 
       const users = JSON.parse(fileContent) as IUser[]
       const userIdx = users.findIndex((el) => el.username === username)
       if (userIdx == -1) {
-        return sendResponse(res, 400, 'No user exists!')
+        throw new BadRequestException('No users exists!')
       }
 
       const isMatch = await Password.compare(users[userIdx].password, password)
       if (!isMatch) {
-        return sendResponse(res, 400, 'Invalid Credentials!')
+        throw new BadRequestException('Invalid credentials!')
       }
 
       const authToken = AuthToken.get({ username })
@@ -56,8 +58,7 @@ export class UserController implements IUserController {
       const allUsers = JSON.parse(fileContent) as IUser[]
       const userIdx = allUsers.findIndex((el) => el.username === username)
       if (userIdx > -1) {
-        sendResponse(res, 400, 'Username already exists! Try another one!')
-        return
+        throw new BadRequestException('Username already exists! Try another one!')
       }
 
       allUsers.push(user)

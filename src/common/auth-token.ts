@@ -1,4 +1,5 @@
 import jwt, { Secret } from 'jsonwebtoken'
+import { BadRequestException } from './errors/bad-request.js'
 
 const JWT_SECRET_KEY = process.env.DB_DIR as Secret
 
@@ -13,7 +14,7 @@ export class AuthToken {
     try {
       return jwt.verify(token, JWT_SECRET_KEY) as TJWTPayload
     } catch (error) {
-      throw new Error('Invalid auth token!')
+      throw new BadRequestException('Invalid auth token!')
     }
   }
 }
