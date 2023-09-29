@@ -12,3 +12,6 @@ export type TCountry = {
   population: number
   area: number
 }
+
+export type TSortBy = Extract<keyof TCountry, 'area' | 'population'>
+export type TSortOrder = 'asc' | 'desc'
