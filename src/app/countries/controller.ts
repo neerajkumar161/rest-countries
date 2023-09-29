@@ -1,6 +1,7 @@
 import { Handler } from 'express'
+import { BadRequestException } from '../../common/errors/bad-request.js'
 import { sendResponse } from '../../common/response-json.js'
-import { ICountryController, TCountry } from './interface.js'
+import { ICountryController, TCountry, TSortBy, TSortOrder } from './interface.js'
 
 let countries: TCountry[] = []
 
@@ -36,7 +37,22 @@ export class CountryController implements ICountryController {
         filteredCountries = countries
       }
 
-      sendResponse(res, 200, 'All Countries fetched', filteredCountries)
+      //After fetching all records, we will sort the order and apply pagination
+      // sortBy=population/area, sortOrder=asc/desc
+      const sortBy = req.query.sortBy as TSortBy
+      const orderBy = req.query.orderBy as TSortOrder
+      const PAGE_SIZE = +(req.query.pageSize as string) || 10
+      const PAGE_NUMBER = +(req.query.pageNumber as string) || 1
+
+      this.sortCoutries(filteredCountries, sortBy, orderBy)
+      const paginatedCountries = this.skipAndLimit(filteredCountries, PAGE_NUMBER, PAGE_SIZE)
+
+      sendResponse(res, 200, 'All Countries fetched', {
+        countries: paginatedCountries.array,
+        currentPage: paginatedCountries.currentPage,
+        totalPages: paginatedCountries.totalPages,
+        totalItems: paginatedCountries.totalItems
+      })
     } catch (error) {
       next(error)
     }
@@ -48,11 +64,48 @@ export class CountryController implements ICountryController {
 
       const response = await fetch(`${BASE_URL}/name/${country.toLowerCase()}`, { method: 'GET' })
 
-      const countryDetails: TCountry = await response.json()
+      const countryDetails: TCountry[] = await response.json()
 
       sendResponse(res, 200, 'Country Details fetched!', countryDetails)
     } catch (error) {
       next(error)
+    }
+  }
+
+  private skipAndLimit<T>(array: T[], pageNumber: number, limit: number) {
+    const totalItems = array.length
+    const totalPages = Math.ceil(totalItems / limit)
+    const skip = (pageNumber - 1) * limit
+
+    if (skip >= array.length) {
+      throw new BadRequestException('No country found!')
+    }
+
+    return {
+      array: array.splice(skip, limit),
+      currentPage: pageNumber,
+      totalPages,
+      totalItems
+    }
+  }
+
+  private sortCoutries(array: TCountry[], sortBy: TSortBy, sortOrder: TSortOrder) {
+    for (let i = 0; i < array.length; ++i) {
+      for (let j = i + 1; j < array.length; ++j) {
+        if (sortOrder === 'asc') {
+          if (array[i][sortBy] > array[j][sortBy]) {
+            let temp = array[i]
+            array[i] = array[j]
+            array[j] = temp
+          }
+        } else {
+          if (array[i][sortBy] < array[j][sortBy]) {
+            let temp = array[i]
+            array[i] = array[j]
+            array[j] = temp
+          }
+        }
+      }
     }
   }
 }
