@@ -39,8 +39,8 @@ export class CountryController implements ICountryController {
 
       //After fetching all records, we will sort the order and apply pagination
       // sortBy=population/area, sortOrder=asc/desc
-      const sortBy = req.query.sortBy as TSortBy
-      const orderBy = req.query.orderBy as TSortOrder
+      const sortBy = req.query.sortBy as TSortBy || 'population'
+      const orderBy = req.query.orderBy as TSortOrder || 'asc'
       const PAGE_SIZE = +(req.query.pageSize as string) || 10
       const PAGE_NUMBER = +(req.query.pageNumber as string) || 1
 
@@ -62,7 +62,7 @@ export class CountryController implements ICountryController {
     try {
       const { country } = req.params
 
-      const response = await fetch(`${BASE_URL}/name/${country.toLowerCase()}`, { method: 'GET' })
+      const response = await fetch(`${BASE_URL}/name/${country.toLowerCase()}?fullText=true`, { method: 'GET' })
 
       const countryDetails: TCountry[] = await response.json()
 
