@@ -32,7 +32,7 @@ export class CountryController implements ICountryController {
           }
         } else {
           // if no filter is provided, we will send entire response
-          filteredCountries = JSON.parse(JSON.stringify(countries))
+          filteredCountries.push(country)
         }
       }
 
