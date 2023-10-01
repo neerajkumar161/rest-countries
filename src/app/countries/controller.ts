@@ -30,11 +30,10 @@ export class CountryController implements ICountryController {
           if (country.languages[language as string]) {
             filteredCountries.push(country)
           }
+        } else {
+          // if no filter is provided, we will send entire response
+          filteredCountries.push(country)
         }
-      }
-
-      if (!area && !population && !language) {
-        filteredCountries = countries
       }
 
       //After fetching all records, we will sort the order and apply pagination
