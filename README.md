@@ -31,14 +31,9 @@ On second terminal, while first opened
   # Start Node.js server for listening requests
   npm start
 ```
-  <!-- - 1. Open terminal and run command ```pnpm i``` , this command will install all dependencies on the project.
-  - 2. Use ```node v18.16.1```, ```pnpm v8.7.5```, and ```typescript v5.2.2``` version to run the application properly. You can check the versions in ```package.json``` file as well.
-  - 3. Now, to run the application, first run command ```npm run compile``` and on second terminal run ```npm start```. First command will compile the ```.ts``` files in ```.js``` files. Make sure there will be no error in compile time.
-  - 4. Check the second terminal, if server is listening or not. If it is, you're good to go. -->
-
 
 ## Endpoints
-The following section lists and describes the available API endpoints, including details about request methods, request payloads, and response formats.
+#### The following section lists and describes the available API endpoints, including details about request methods, request payloads, and response formats.
 
 ### \`POST /user/signup\` - User Signup endpoint
 - #### Request method: \`GET\`
@@ -117,7 +112,7 @@ curl -X POST http://localhost:5500/user/signup -H "Content-Type: application/jso
 
 ### \`GET /countries/{countryName}\` - Get Country Details by name
 - #### Request method: \`GET\`
-- #### Request paramters: countryName: india | sri lanka | china ....
+- #### Request parameters: countryName: india | sri lanka | china ....
 - #### Request headers payload:
 ```
 Authorization: auth-token // user auth token received in signin api
@@ -130,8 +125,8 @@ Authorization: auth-token // user auth token received in signin api
     {
       "name": {},
       "currencies": {},
-      "region": ""
-      // and so on.... 
+      "region": "",
+      "otherKeys": "values"
     }
   ],
   "code": 200
@@ -156,29 +151,20 @@ curl -X GET http://localhost:5500/countries/india -H "Authorization: auth-token"
 
 ### \`GET /countries\` - Get Countries with specific filters
 - #### Request method: \`GET\`
-- #### Request query paramters:
-```js
-    /* Use any of these filters at a time 
-     * Note: Since, population and area will return single country, therefore sorting and pagination will not work on 
-     * these two filters, use only language filter to use pagination
-     * if no filter is passed, it will retreive all countries with pagination
-     */
-    language: hin | eng | tam | jpa   // use Alpha -3 codes [here](https://www.loc.gov/standards/iso639-2/php/English_list.php) is the list
-    population: 1380004385  // population of the country
-    area: 3287590.0  // area of the country
-
-    /* Sorting an Pagination */
-    sortBy: population | area
-    orderBy: asc | desc
-    pageSize: number
-    pageNumber: number
-
-    /** Examples:
-     * http://localhost:5500/countries?population=1380004385
-     * http://localhost:5500/countries?area=3287590.0
-     * http://localhost:5500/countries?language=hin&sortBy=population&orderBy=desc&pageSize=10&pageNumber=1 
-     */
-```
+- #### Request query parameters:
+  ##### Note: Since, population and area will return single country, therefore sorting and pagination will not work on these two filters, use only language filter to use pagination. if no filter is passed, it will retreive all countries with pagination
+  - language: hin | eng | tam | jpa   // use Alpha -3 codes [here](https://www.loc.gov/standards/iso639-2/php/English_list.php) is the list.
+  - population: 1380004385  // population of the country
+  - area: 3287590.0  // area of the country
+- #### Sorting an Pagination
+  - sortBy: population | area
+  - orderBy: asc | desc
+  - pageSize: number
+  - pageNumber: number
+- #### Examples
+  * http://localhost:5500/countries?population=1380004385
+  * http://localhost:5500/countries?area=3287590.0
+  * http://localhost:5500/countries?language=hin&sortBy=population&orderBy=desc&pageSize=10&pageNumber=1 
 
 - #### Request headers payload:
 ```
@@ -192,8 +178,8 @@ Authorization: auth-token // user auth token received in signin api
     "countries": {
       "name": {},
       "currencies": {},
-      "region": ""
-      // and so on.... 
+      "region": "",
+      "otherKeys": "values"
     },
     "currentPage": 1,
     "totalPages": 25,
@@ -214,7 +200,7 @@ Authorization: auth-token // user auth token received in signin api
 ```
 - #### Curl Request
 ```bash
-curl -X GET 'http://localhost:5500/countries?language=hin&sortBy=area&orderBy=asc&pageSize=10&pageNumber=1' -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im5lZXJhamt1bWFyIiwiaWF0IjoxNjk2MTcyNTUzLCJleHAiOjE2OTYxNzYxNTN9.KSPFDEqNVIFNiz44aAIdqpcaMqTQYoCx06C9rJDQit8"
+curl -X GET 'http://localhost:5500/countries?language=hin&sortBy=area&orderBy=asc&pageSize=10&pageNumber=1' -H "Authorization: auth-token"
 ```
 
 ## Global error
