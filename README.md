@@ -41,21 +41,39 @@ On second terminal, while first opened
 The following section lists and describes the available API endpoints, including details about request methods, request payloads, and response formats.
 
 ### \`POST /user/signup\` - User Signup endpoint
-#### Request method: \`GET\`
-#### Request body payload:
+- #### Request method: \`GET\`
+- #### Request body payload:
 ```json
 {
   "username": "neerajkumar",
   "password": "testpassword"
 }
 ```
-#### Request response:
+- #### Request response:
 ```json
 {
   "message": "User registered!",
   "data": null,
   "code": 200
 }
+```
+
+- #### Request error:
+```json
+{
+  "errors":[
+    {
+      "message":"Username already exists! Try another one!"
+    }
+  ]
+}
+```
+- #### Curl Request
+```bash
+curl -X POST http://localhost:5500/user/signup -H "Content-Type: application/json" -d '{
+    "username": "neerajkumar",
+    "password": "tester"
+}'
 ```
 
 ### \`POST /user/signin\` - User Signin endpoint
@@ -77,13 +95,31 @@ The following section lists and describes the available API endpoints, including
   },
   "code": 200
 }
-
 ```
+
+- #### Request error:
+```json
+{
+  "errors":[
+    {
+      "message":"Invalid credentials!"
+    }
+  ]
+}
+```
+- #### Curl Request
+```bash
+curl -X POST http://localhost:5500/user/signup -H "Content-Type: application/json" -d '{
+    "username": "neerajkumar",
+    "password": "tester"
+}'
+```
+
 ### \`GET /countries/{countryName}\` - Get Country Details by name
 - #### Request method: \`GET\`
 - #### Request paramters: countryName: india | sri lanka | china ....
 - #### Request headers payload:
-```json
+```
 Authorization: auth-token // user auth token received in signin api
 ```
 - #### Request response:
@@ -101,8 +137,24 @@ Authorization: auth-token // user auth token received in signin api
   "code": 200
 }
 ```
+- #### Request error:
+```json
+{
+  "errors":[
+    {
+      "message":"Invalid auth token!" // or "Auth token is required!"
+    }
+  ]
+}
+```
+- #### Curl Request
+```bash
+curl -X GET http://localhost:5500/countries/india -H "Authorization: auth-token"
+```
 
-### \`GET /countries\` - Get Countries with spe
+
+
+### \`GET /countries\` - Get Countries with specific filters
 - #### Request method: \`GET\`
 - #### Request query paramters:
 ```js
@@ -129,25 +181,49 @@ Authorization: auth-token // user auth token received in signin api
 ```
 
 - #### Request headers payload:
-```json
+```
 Authorization: auth-token // user auth token received in signin api
 ```
 - #### Request response:
 ```json
 {
-  "message": "Country Details fetched!",
-  "data": [
-    {
+  "message": "All Countries fetched",
+  "data": {
+    "countries": {
       "name": {},
       "currencies": {},
       "region": ""
       // and so on.... 
-    }
-  ],
+    },
+    "currentPage": 1,
+    "totalPages": 25,
+    "totalItems": 250
+      },
   "code": 200
 }
 ```
+- #### Request error:
+```json
+{
+  "errors":[
+    {
+      "message":"Invalide auth token!" // or "Auth token is required!"
+    }
+  ]
+}
+```
+- #### Curl Request
+```bash
+curl -X GET 'http://localhost:5500/countries?language=hin&sortBy=area&orderBy=asc&pageSize=10&pageNumber=1' -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im5lZXJhamt1bWFyIiwiaWF0IjoxNjk2MTcyNTUzLCJleHAiOjE2OTYxNzYxNTN9.KSPFDEqNVIFNiz44aAIdqpcaMqTQYoCx06C9rJDQit8"
+```
 
+## Global error
+- When some error occured in server
+```json
+{ 
+  "message": "Something went wrong!"
+}
+```
 ## License
 This project is licensed under the MIT License. See the LICENSE file for details.
 
