@@ -36,7 +36,7 @@ On second terminal, while first opened
 #### The following section lists and describes the available API endpoints, including details about request methods, request payloads, and response formats.
 
 ### \`POST /user/signup\` - User Signup endpoint
-- #### Request method: \`GET\`
+- #### Request method: \`POST\`
 - #### Request body payload:
 ```json
 {
@@ -104,7 +104,7 @@ curl -X POST http://localhost:5500/user/signup -H "Content-Type: application/jso
 ```
 - #### Curl Request
 ```bash
-curl -X POST http://localhost:5500/user/signup -H "Content-Type: application/json" -d '{
+curl -X POST http://localhost:5500/user/signin -H "Content-Type: application/json" -d '{
     "username": "neerajkumar",
     "password": "tester"
 }'
@@ -209,6 +209,17 @@ curl -X GET 'http://localhost:5500/countries?language=hin&sortBy=area&orderBy=as
 { 
   "message": "Something went wrong!"
 }
+```
+  - When Request Body, Params and Quey validation fails
+```json
+[
+  {"message":"Validation error!",
+  "fields":
+    {
+      "key": "string[]"
+    }
+  }
+]
 ```
 ## License
 This project is licensed under the MIT License. See the LICENSE file for details.

@@ -5,15 +5,23 @@ import { sendResponse } from '../../common/response-json.js'
 import { readFileFromDB, writeFileToDB } from '../../utils/file-system.js'
 import { Password } from '../../utils/password.js'
 import { IUser, IUserController } from './interface.js'
+import { UserValidation } from './validation.js'
 
 const DB_DIR = process.env.DB_DIR
 const USER_DB_PATH = `${DB_DIR}/users.json`
 
 export class UserController implements IUserController {
+  private userValidation: UserValidation
+
+  constructor() {
+    this.userValidation = new UserValidation()
+  }
+
   signinUser: Handler = async (req, res, next) => {
     try {
+      const requestBody = this.userValidation.signin(req.body)
+      const { username, password } = requestBody
 
-      const { username, password } = req.body
       const fileContent = await readFileFromDB(USER_DB_PATH)
       if (!fileContent) {
         // In case when no file and user created!
@@ -41,7 +49,8 @@ export class UserController implements IUserController {
 
   signupUser: Handler = async (req, res, next) => {
     try {
-      const { username, password } = req.body
+      const requestBody = this.userValidation.signup(req.body)
+      const { username, password } = requestBody
 
       const user = { username, password: await Password.toHash(password) }
 
@@ -64,6 +73,7 @@ export class UserController implements IUserController {
       await writeFileToDB(USER_DB_PATH, JSON.stringify(allUsers))
       sendResponse(res, 200, 'User registered!')
     } catch (error) {
+      console.log('Error here!')
       next(error)
     }
   }

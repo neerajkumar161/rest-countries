@@ -2,19 +2,25 @@ import { Handler } from 'express'
 import { BadRequestException } from '../../common/errors/bad-request.js'
 import { sendResponse } from '../../common/response-json.js'
 import { ICountryController, TCountry, TSortBy, TSortOrder } from './interface.js'
+import { CountryValidation } from './validation.js'
 
 let countries: TCountry[] = []
 
 const BASE_URL = 'https://restcountries.com/v3.1'
 
 export class CountryController implements ICountryController {
+  private countryValidation: CountryValidation
+
+  constructor() {
+    this.countryValidation = new CountryValidation()
+  }
+
   getCountries: Handler = async (req, res, next) => {
     try {
-      const { population, area, language } = req.query
+      const requestQuery = this.countryValidation.countries(req.query)
+      const { population, area, language } = requestQuery
       let filteredCountries: TCountry[] = []
-      // population filter, population = 1380004385
-      // area = 3287590.0
-      // languages = eng, hin, tam
+
       if (!countries.length) {
         const response = await fetch(`${BASE_URL}/all`, { method: 'GET' })
         countries = await response.json()
@@ -38,10 +44,10 @@ export class CountryController implements ICountryController {
 
       //After fetching all records, we will sort the order and apply pagination
       // sortBy=population/area, sortOrder=asc/desc
-      const sortBy = req.query.sortBy as TSortBy || 'population'
-      const orderBy = req.query.orderBy as TSortOrder || 'asc'
-      const PAGE_SIZE = +(req.query.pageSize as string) || 10
-      const PAGE_NUMBER = +(req.query.pageNumber as string) || 1
+      const sortBy = requestQuery.sortBy || 'population'
+      const orderBy = requestQuery.orderBy || 'asc'
+      const PAGE_SIZE = +(requestQuery.pageSize as string) || 10
+      const PAGE_NUMBER = +(requestQuery.pageNumber as string) || 1
 
       this.sortCoutries(filteredCountries, sortBy, orderBy)
       const paginatedCountries = this.skipAndLimit(filteredCountries, PAGE_NUMBER, PAGE_SIZE)
@@ -59,7 +65,8 @@ export class CountryController implements ICountryController {
 
   getCountryByName: Handler = async (req, res, next) => {
     try {
-      const { country } = req.params
+      const requestParams = this.countryValidation.countryByName(req.params)
+      const { country } = requestParams
 
       const response = await fetch(`${BASE_URL}/name/${country.toLowerCase()}?fullText=true`, { method: 'GET' })
 
