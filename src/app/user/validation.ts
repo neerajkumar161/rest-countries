@@ -1,18 +1,20 @@
-import { ZodError, z } from 'zod'
+import { z } from 'zod'
+import { ZodCustomError } from '../../common/errors/custom-error.js'
 
-export class UserValidation {
-  
-}
-const bodySchema = z.object({
-  userName: z.string().min(5).toLowerCase(),
-  password: z.string().min(5)
-})
+export class UserValidation extends ZodCustomError {
+  signin(body: unknown) {
+    const bodySchema = z.object({
+      username: z.string().min(5).toLowerCase(),
+      password: z.string()
+    })
+    return this.catchErr(() => bodySchema.parse(body))
+  }
 
-try {
-  const result = bodySchema.parse({ username: 'NEERAJKUMAR161', password:  ''})
-  console.log('Result')
-} catch (error) {
-  if(error instanceof ZodError) {
-      console.log('Its instance of zod error', error.formErrors)
+  signup(body: unknown) {
+    const bodySchema = z.object({
+      username: z.string().min(5).toLowerCase(),
+      password: z.string().min(5)
+    })
+    return this.catchErr(() => bodySchema.parse(body))
   }
 }
